@@ -6,10 +6,9 @@ import { HousingService } from '../housing.service';
 
 @Component({
   selector: 'app-home',
-  imports: [CommonModule,
-    HousingLocationComponent],
+  imports: [CommonModule, HousingLocationComponent],
   templateUrl: './home.component.html',
-styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.css']
 })
 export class HomeComponent {
   housingLocationList: Housinglocation[] = [];
@@ -17,17 +16,25 @@ export class HomeComponent {
   filteredLocationList: Housinglocation[] = [];
 
   constructor() {
+    this.loadHousingLocations();
+  }
+  loadHousingLocations() {
     this.housingLocationList = this.housingService.getAllHousingLocations();
     this.filteredLocationList = this.housingLocationList;
   }
   filterResults(text: string) {
-    if (!text) {
+    if (!text.trim()) {
       this.filteredLocationList = this.housingLocationList;
       return;
     }
 
+    const searchTerm = text.trim().toLowerCase();
     this.filteredLocationList = this.housingLocationList.filter(
-      housingLocation => housingLocation?.city.toLowerCase().includes(text.toLowerCase())
+      housingLocation => housingLocation.city.toLowerCase().includes(searchTerm)
     );
+  }
+  onSubmit(filterValue: string, event: Event) {
+    event.preventDefault();
+    this.filterResults(filterValue);
   }
 }
